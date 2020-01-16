@@ -1,0 +1,61 @@
+@import 'reset';
+* {
+  box-sizing: border-box;
+}
+
+.App{
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+}
+
+.game-section{
+  border: 1px solid black;
+  position: relative;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__select-game-parameters{
+    margin-top: 50px;
+    display: flex;
+  }
+
+  &__input-player-name {
+    background-color: rgba(100, 149, 237, 0.28);
+    padding: 5px;
+    margin-left: 20px;
+  }
+
+  &__play-button{
+    margin-left: 20px;
+    background-color: rgba(100, 149, 237, 0.28);
+    border: 1px solid burlywood;
+    &:hover {
+      background-color: aliceblue;
+      cursor: pointer;
+    }
+  }
+
+  &__select-game-mode {
+    transition: all 0.2s;
+    background-color: rgba(100, 149, 237, 0.28);
+    height: 50px;
+    &:focus {
+      background-color: wheat;
+      transform: rotate(360deg);
+    }
+  }
+
+  &__results {
+    width: 150px;
+    height: 30px;
+    border-color: cadetblue;
+    padding: 5px;
+    background-color: wheat;
+    position: absolute;
+    left: calc(50% - 150px / 2);
+    top: 100px;
+  }
+}

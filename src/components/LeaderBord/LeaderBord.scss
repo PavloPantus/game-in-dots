@@ -1,0 +1,17 @@
+.leaders-bord {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid black;
+
+  leaders-bord__heading {
+
+    font-size: medium;
+  }
+
+  .leader {
+    margin-top: 5px;
+    border: 1px solid cadetblue;
+    background-color: burlywood;
+  }
+}

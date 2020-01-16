@@ -1,0 +1,26 @@
+.game-board {
+  display: grid;
+  margin-top: 100px;
+
+  &__square{
+    height: 30px;
+    width: 30px;
+    border: 1px solid black;
+    cursor: pointer;
+    &:hover{
+      border: 2px solid #66ff40;
+    }
+  }
+}
+
+.active-random{
+  background-color: blue;
+}
+
+.user-won-square {
+  background-color: #66ff40;
+}
+
+.user-lost-square {
+  background-color: red;
+}
