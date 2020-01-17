@@ -101,18 +101,7 @@ export const GameBoard = ({
 
       gameProcess = setInterval(() => {
         updateUserLostIndexes(filteredItemsBefore[randomBefore]);
-
-        const filteredItems = notUsedIndexes.filter(
-          item => userWonIndexes.indexOf(item) === -1
-            && userLostIndexes.indexOf(item) === -1
-        );
-
-        const random = getRandom(filteredItems.length);
-
-        setActiveRandomSquare(
-          filteredItems[random]
-        );
-      }, currentGameMode ? presets[currentGameMode].delay : 2000);
+      }, currentGameMode ? presets[currentGameMode].delay : 1000);
     }
 
     return () => {
@@ -163,7 +152,7 @@ export const GameBoard = ({
 
               )
             }
-            onClick={() => {
+            onMouseDown={() => {
               if (index === activeRandomSquare) {
                 updateUserWonIndexes(index);
               }
