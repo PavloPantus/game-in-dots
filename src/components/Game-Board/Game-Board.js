@@ -58,8 +58,6 @@ export const GameBoard = ({
   useEffect(() => {
     let gameProcess;
 
-    console.log('length of not used', notUsedIndexes.length);
-
     if (gameStarted) {
       // cheking is game over
       if (userLostIndexes.length > notUsedIndexes.length / 2
@@ -186,7 +184,12 @@ GameBoard.propTypes = {
   ).isRequired,
   updateNotUsedIndexes: PropTypes.func.isRequired,
   setActiveRandomSquare: PropTypes.func.isRequired,
-  activeRandomSquare: PropTypes.string.isRequired,
+  activeRandomSquare: PropTypes.oneOfType(
+    [
+      PropTypes.string,
+      PropTypes.number,
+    ]
+  ).isRequired,
   updateUserWonIndexes: PropTypes.func.isRequired,
   userWonIndexes: PropTypes.arrayOf(
     PropTypes.number
