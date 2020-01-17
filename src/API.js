@@ -1,38 +1,31 @@
-const baseUrl = 'https://starnavi-frontend-test-task.herokuapp.com'
+const baseUrl = 'https://starnavi-frontend-test-task.herokuapp.com';
 
-const getData = async (url)=>{
-    const response = await fetch(`${baseUrl}/${url}`);
-    const data = await response.json();
-    return data;
-}
+const getData = async(url) => {
+  const response = await fetch(`${baseUrl}/${url}`);
+  const data = await response.json();
 
-export const getWinnersFromServer = ()=>{
-    return getData('winners');
-}
+  return data;
+};
 
-export const getGameSettingsFromServer = ()=>{
-    return getData('game-settings');
-}
+export const getWinnersFromServer = () => getData('winners');
 
-const sendWinnerToServer = async (data) => {
-    try {
-        const response = await fetch(`${baseUrl}/winners`, {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const json = await response.json();
-        console.log('Успено отправлено на сервер');
-        return json
-    } catch (error) {
-        console.error('Ошибка:', error);
-    }
-}
+export const getGameSettingsFromServer = () => getData('game-settings');
 
-export const sendWinnerInfoToServer  = (data) => {
-    return (dispatch) => {
-       return  sendWinnerToServer(data)
-    }
-}
+const sendWinnerToServer = async(data) => {
+  const response = await fetch(`${baseUrl}/winners`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  const json = await response.json();
+
+  console.log('Успено отправлено на сервер');
+
+  return json;
+};
+
+export const sendWinnerInfoToServer = data => dispatch => (
+  sendWinnerToServer(data)
+);

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import './Game-Board.scss';
 import classNames from 'classnames';
-
+import PropTypes from 'prop-types';
 
 export const GameBoard = ({
   currentGameMode,
@@ -24,119 +24,187 @@ export const GameBoard = ({
   sendWinnerInfoToServer,
   loadLeadrs,
 }) => {
-  let arrayOfSquares = useMemo(
-()=>{
-          console.log('counting');
-          let squares = [];
-          for(let i = 0; i < Math.pow(currentGameMode?presets[currentGameMode].field:5,2); i++){
-            squares.push(i)
-          };
-          return squares;
-  },
+  const arrayOfSquares = useMemo(
+    () => {
+      console.log('counting');
+
+      const squares = [];
+
+      for (let i = 0;
+        i < (currentGameMode ? presets[currentGameMode].field : 5) ** 2;
+        i += 1) {
+        squares.push(i);
+      }
+
+      return squares;
+    },
     [currentGameMode, presets]
   );
 
-  useEffect(()=>{
-    let indexes = [];
-    for(let i = 0; i < Math.pow(currentGameMode?presets[currentGameMode].field :5 ,2); i++){
-      indexes.push(i)
-    };
-    updateNotUsedIndexes(indexes)},[currentGameMode, presets, updateNotUsedIndexes])
+  useEffect(() => {
+    const indexes = [];
 
+    for (
+      let i = 0;
+      i < (currentGameMode ? presets[currentGameMode].field : 5) ** 2;
+      i += 1) {
+      indexes.push(i);
+    }
+    updateNotUsedIndexes(indexes);
+  }, [currentGameMode, presets, updateNotUsedIndexes]);
 
+  const getRandom = maxNumber => Math.floor(Math.random() * maxNumber);
 
-  const getRandom = (maxNumber)=>{
-    return Math.floor(Math.random() * maxNumber)
-  }
-
-
-  useEffect(()=>{
+  useEffect(() => {
     let gameProcess;
-    console.log('length of not used',notUsedIndexes.length)
-    if(gameStarted){
-      //cheking is game over
-      if(userLostIndexes.length>notUsedIndexes.length/2
-       || userWonIndexes.length>notUsedIndexes.length/2
-      ){
-        setWinner(userWonIndexes.length>userLostIndexes.length?currentPlayer:'Computer')
+
+    console.log('length of not used', notUsedIndexes.length);
+
+    if (gameStarted) {
+      // cheking is game over
+      if (userLostIndexes.length > notUsedIndexes.length / 2
+       || userWonIndexes.length > notUsedIndexes.length / 2
+      ) {
+        setWinner(
+          userWonIndexes.length > userLostIndexes.length
+            ? currentPlayer : 'Computer'
+        );
         clearUserWonIndexes();
-          clearUserLostIndexes();
+        clearUserLostIndexes();
         setShowResults(true);
         setGameStarted(false);
-        let date = new Date();
-        let fullDate = date.toLocaleString()
+
+        const date = new Date();
+        const fullDate = date.toLocaleString();
+
         sendWinnerInfoToServer({
-          winner: userWonIndexes.length>userLostIndexes.length
-            ?currentPlayer:'Computer',
+          winner: userWonIndexes.length > userLostIndexes.length
+            ? currentPlayer : 'Computer',
           date: fullDate,
         })
-          .then(()=>{loadLeadrs()})
-        ;
+          .then(() => {
+            loadLeadrs();
+          }).catch(
+            (error) => {
+              console.log(error);
+            }
+          );
       }
 
-
-      let filteredItemsBefore = notUsedIndexes.filter(
-        (item)=>userWonIndexes.indexOf(item)===-1
-        && userLostIndexes.indexOf(item)===-1
+      const filteredItemsBefore = notUsedIndexes.filter(
+        item => userWonIndexes.indexOf(item) === -1
+        && userLostIndexes.indexOf(item) === -1
       );
-      let randomBefore = getRandom(filteredItemsBefore.length);
+      const randomBefore = getRandom(filteredItemsBefore.length);
+
       setActiveRandomSquare(
         filteredItemsBefore[randomBefore]
       );
-     gameProcess = setInterval(()=>{
-       updateUserLostIndexes(filteredItemsBefore[randomBefore])
-       console.log('userLOOOOST',userLostIndexes)
-        console.log(
-          'filtering',
+
+      gameProcess = setInterval(() => {
+        updateUserLostIndexes(filteredItemsBefore[randomBefore]);
+
+        const filteredItems = notUsedIndexes.filter(
+          item => userWonIndexes.indexOf(item) === -1
+            && userLostIndexes.indexOf(item) === -1
         );
-        let filteredItems = notUsedIndexes.filter(
-          (item)=>userWonIndexes.indexOf(item)===-1
-            && userLostIndexes.indexOf(item)===-1
-        );
-        console.log('fileterd items length =',filteredItems.length)
-        let random = getRandom(filteredItems.length);
-        console.log('random index',random)
+
+        const random = getRandom(filteredItems.length);
+
         setActiveRandomSquare(
           filteredItems[random]
         );
-        console.log('game is going', userWonIndexes)},currentGameMode ? presets[currentGameMode].delay:2000)
+      }, currentGameMode ? presets[currentGameMode].delay : 2000);
     }
-    return ()=>{clearInterval(gameProcess)}
-  } ,[gameStarted, userWonIndexes, userLostIndexes, notUsedIndexes, setActiveRandomSquare, currentGameMode, presets, setWinner, currentPlayer, clearUserWonIndexes, clearUserLostIndexes, setShowResults, setGameStarted, sendWinnerInfoToServer, loadLeadrs, updateUserLostIndexes])
 
+    return () => {
+      clearInterval(gameProcess);
+    };
+  }, [
+    gameStarted,
+    userWonIndexes,
+    userLostIndexes,
+    notUsedIndexes,
+    setActiveRandomSquare,
+    currentGameMode,
+    presets,
+    setWinner,
+    currentPlayer,
+    clearUserWonIndexes,
+    clearUserLostIndexes,
+    setShowResults,
+    setGameStarted,
+    sendWinnerInfoToServer,
+    loadLeadrs,
+    updateUserLostIndexes]);
 
+  return (
+    <section
+      style={{
+        gridGap: '0',
+        gridTemplateColumns: `repeat(${
+          currentGameMode ? presets[currentGameMode].field : 5
+        }, 30px)`,
+      }}
+      className="game-board"
+    >
+      {arrayOfSquares.map(
+        (sqare, index) => (
+          // eslint-disable-next-line max-len
+          // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
+          <div
+            key={sqare}
+            className={
+              classNames(
+                'game-board__square',
+                {
+                  'active-random': index === activeRandomSquare,
+                  'user-won-square': userWonIndexes.includes(index),
+                  'user-lost-square': userLostIndexes.includes(index),
+                },
 
-    return (
-      <section
-        style={{
-          gridGap: '0',
-          gridTemplateColumns: `repeat(${currentGameMode ? presets[currentGameMode].field : 5}, 30px)`,
-        }}
-        className="game-board">
-        {arrayOfSquares.map(
-          (sqare,index)=>{
-            return (
-              <div
-                key={sqare}
-                className={
-                  classNames(
-                    'game-board__square',
-                    {
-                      'active-random': index===activeRandomSquare,
-                      'user-won-square': userWonIndexes.includes(index),
-                      'user-lost-square': userLostIndexes.includes(index),
-                    },
-
-                  )
-                 }
-                onClick={()=>{console.log('user click', userWonIndexes);if(index===activeRandomSquare){updateUserWonIndexes(index)}}}
-              >
-              </div>
               )
-          }
-        )}
-      </section>
-    )
-}
+            }
+            onClick={() => {
+              if (index === activeRandomSquare) {
+                updateUserWonIndexes(index);
+              }
+            }}
+          />
+        )
+      )}
+    </section>
+  );
+};
 
-
+GameBoard.propTypes = {
+  currentGameMode: PropTypes.string.isRequired,
+  gameStarted: PropTypes.bool.isRequired,
+  setGameStarted: PropTypes.func.isRequired,
+  notUsedIndexes: PropTypes.arrayOf(
+    PropTypes.number
+  ).isRequired,
+  updateNotUsedIndexes: PropTypes.func.isRequired,
+  setActiveRandomSquare: PropTypes.func.isRequired,
+  activeRandomSquare: PropTypes.string.isRequired,
+  updateUserWonIndexes: PropTypes.func.isRequired,
+  userWonIndexes: PropTypes.arrayOf(
+    PropTypes.number
+  ).isRequired,
+  updateUserLostIndexes: PropTypes.func.isRequired,
+  userLostIndexes: PropTypes.arrayOf(
+    PropTypes.number
+  ).isRequired,
+  presets: PropTypes.shape({
+    easyMode: PropTypes.object,
+    normalMode: PropTypes.object,
+    hardMode: PropTypes.object,
+  }).isRequired,
+  clearUserWonIndexes: PropTypes.func.isRequired,
+  clearUserLostIndexes: PropTypes.func.isRequired,
+  setShowResults: PropTypes.func.isRequired,
+  setWinner: PropTypes.func.isRequired,
+  currentPlayer: PropTypes.string.isRequired,
+  sendWinnerInfoToServer: PropTypes.func.isRequired,
+  loadLeadrs: PropTypes.func.isRequired,
+};
