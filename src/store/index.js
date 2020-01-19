@@ -9,7 +9,6 @@ import { UserWonIndexesReducer } from './userWonIndexesReducer';
 import { UserLostIndexesReducer } from './userLostIndexesReducer';
 import { StartGameReducer } from './StartGameReducer';
 import { ActiveRandomSquareReducer } from './ActiveRandomSquareReducer';
-import { NotUsedIndexesReducer } from './NotUsedIndexesReducer';
 import { ShowResultsReducer } from './ShowResultsReducer';
 import { SetWinnerReducer } from './SetWinnerReducer';
 
@@ -22,7 +21,6 @@ const rootReducer = combineReducers({
   userLostIndexes: UserLostIndexesReducer,
   gameStarted: StartGameReducer,
   activeRandomSquare: ActiveRandomSquareReducer,
-  notUsedIndexes: NotUsedIndexesReducer,
   showResults: ShowResultsReducer,
   winner: SetWinnerReducer,
 });

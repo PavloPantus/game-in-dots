@@ -5,10 +5,6 @@ import {
   setGameStarted,
 } from '../../store/StartGameReducer';
 import {
-  getNotUsedIndexes,
-  updateNotUsedIndexes,
-} from '../../store/NotUsedIndexesReducer';
-import {
   setActiveRandomSquare,
   getActiveRandomSuqare,
 } from '../../store/ActiveRandomSquareReducer';
@@ -32,7 +28,6 @@ import { loadLeadrs } from '../../store/LeadersReducer';
 
 const mapStateToProps = state => ({
   gameStarted: getGameStarted(state),
-  notUsedIndexes: getNotUsedIndexes(state),
   activeRandomSquare: getActiveRandomSuqare(state),
   userWonIndexes: getUserWonIndexes(state),
   userLostIndexes: getUserLostIndexes(state),
@@ -43,7 +38,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   setGameStarted,
-  updateNotUsedIndexes,
   setActiveRandomSquare,
   updateUserWonIndexes,
   updateUserLostIndexes,

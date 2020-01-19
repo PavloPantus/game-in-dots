@@ -7,8 +7,6 @@ export const GameBoard = ({
   currentGameMode,
   gameStarted,
   setGameStarted,
-  notUsedIndexes,
-  updateNotUsedIndexes,
   setActiveRandomSquare,
   activeRandomSquare,
   updateUserWonIndexes,
@@ -24,27 +22,11 @@ export const GameBoard = ({
   sendWinnerInfoToServer,
   loadLeadrs,
 }) => {
-
-  const [squareSize] = useState((document.documentElement.clientWidth > 700) ? '30px':'20px');
-
-  const arrayOfSquares = useMemo(
-    () => {
-      console.log('counting');
-
-      const squares = [];
-
-      for (let i = 0;
-        i < (currentGameMode ? presets[currentGameMode].field : 5) ** 2;
-        i += 1) {
-        squares.push(i);
-      }
-
-      return squares;
-    },
-    [currentGameMode, presets]
+  const [squareSize] = useState(
+    (document.documentElement.clientWidth > 700) ? '30px' : '20px'
   );
 
-  useEffect(() => {
+  const notUsedIndexes = useMemo(() => {
     const indexes = [];
 
     for (
@@ -53,8 +35,9 @@ export const GameBoard = ({
       i += 1) {
       indexes.push(i);
     }
-    updateNotUsedIndexes(indexes);
-  }, [currentGameMode, presets, updateNotUsedIndexes]);
+
+    return indexes;
+  }, [currentGameMode, presets]);
 
   const getRandom = maxNumber => Math.floor(Math.random() * maxNumber);
 
@@ -62,14 +45,21 @@ export const GameBoard = ({
     let gameProcess;
 
     if (gameStarted) {
+      const lengthOfNotUsedIndexes = notUsedIndexes.length;
+      const lengthOfUserLostIndexes = userLostIndexes.length;
+      const lengthOfUserWonIndexes = userWonIndexes.length;
+
       // cheking is game over
-      if (userLostIndexes.length > notUsedIndexes.length / 2
-       || userWonIndexes.length > notUsedIndexes.length / 2
+      console.log(lengthOfUserLostIndexes);
+
+      if (lengthOfUserLostIndexes > Math.floor(lengthOfNotUsedIndexes / 2)
+       || lengthOfUserWonIndexes > Math.floor(lengthOfNotUsedIndexes / 2)
       ) {
         setWinner(
-          userWonIndexes.length > userLostIndexes.length
+          lengthOfUserWonIndexes > lengthOfUserLostIndexes
             ? currentPlayer : 'Computer'
         );
+
         clearUserWonIndexes();
         clearUserLostIndexes();
         setShowResults(true);
@@ -90,21 +80,21 @@ export const GameBoard = ({
               console.log(error);
             }
           );
+      } else {
+        const filteredItemsBefore = notUsedIndexes.filter(
+          item => userWonIndexes.indexOf(item) === -1
+            && userLostIndexes.indexOf(item) === -1
+        );
+        const randomBefore = getRandom(filteredItemsBefore.length);
+
+        setActiveRandomSquare(
+          filteredItemsBefore[randomBefore]
+        );
+
+        gameProcess = setInterval(() => {
+          updateUserLostIndexes(filteredItemsBefore[randomBefore]);
+        }, currentGameMode ? presets[currentGameMode].delay : 1000);
       }
-
-      const filteredItemsBefore = notUsedIndexes.filter(
-        item => userWonIndexes.indexOf(item) === -1
-        && userLostIndexes.indexOf(item) === -1
-      );
-      const randomBefore = getRandom(filteredItemsBefore.length);
-
-      setActiveRandomSquare(
-        filteredItemsBefore[randomBefore]
-      );
-
-      gameProcess = setInterval(() => {
-        updateUserLostIndexes(filteredItemsBefore[randomBefore]);
-      }, currentGameMode ? presets[currentGameMode].delay : 1000);
     }
 
     return () => {
@@ -139,36 +129,34 @@ export const GameBoard = ({
       className="game-board"
     >
       {
-        arrayOfSquares.map(
-          (square, index) => {
-            return (
-              // eslint-disable-next-line max-len
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-              <div
-                style={{
-                  width: `${squareSize}`,
-                  height: `${squareSize}`,
-                }}
-                key={square}
-                className={
-                  classNames(
-                    'game-board__square',
-                    {
-                      'active-random': index === activeRandomSquare,
-                      'user-won-square': userWonIndexes.includes(index),
-                      'user-lost-square': userLostIndexes.includes(index),
-                    },
+        notUsedIndexes.map(
+          (square, index) => (
+            // eslint-disable-next-line max-len
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
+            <div
+              style={{
+                width: `${squareSize}`,
+                height: `${squareSize}`,
+              }}
+              key={square}
+              className={
+                classNames(
+                  'game-board__square',
+                  {
+                    'active-random': index === activeRandomSquare,
+                    'user-won-square': userWonIndexes.includes(index),
+                    'user-lost-square': userLostIndexes.includes(index),
+                  },
 
-                  )
+                )
+              }
+              onMouseDown={() => {
+                if (index === activeRandomSquare) {
+                  updateUserWonIndexes(index);
                 }
-                onMouseDown={() => {
-                  if (index === activeRandomSquare) {
-                    updateUserWonIndexes(index);
-                  }
-                }}
-              />
-            )
-          }
+              }}
+            />
+          )
         )
       }
     </section>
@@ -179,10 +167,6 @@ GameBoard.propTypes = {
   currentGameMode: PropTypes.string.isRequired,
   gameStarted: PropTypes.bool.isRequired,
   setGameStarted: PropTypes.func.isRequired,
-  notUsedIndexes: PropTypes.arrayOf(
-    PropTypes.number
-  ).isRequired,
-  updateNotUsedIndexes: PropTypes.func.isRequired,
   setActiveRandomSquare: PropTypes.func.isRequired,
   activeRandomSquare: PropTypes.oneOfType(
     [
