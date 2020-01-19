@@ -50,7 +50,6 @@ export const GameBoard = ({
       const lengthOfUserWonIndexes = userWonIndexes.length;
 
       // cheking is game over
-      console.log(lengthOfUserLostIndexes);
 
       if (lengthOfUserLostIndexes > Math.floor(lengthOfNotUsedIndexes / 2)
        || lengthOfUserWonIndexes > Math.floor(lengthOfNotUsedIndexes / 2)
