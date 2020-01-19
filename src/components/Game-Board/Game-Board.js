@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './Game-Board.scss';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -24,6 +24,9 @@ export const GameBoard = ({
   sendWinnerInfoToServer,
   loadLeadrs,
 }) => {
+
+  const [squareSize] = useState((document.documentElement.clientWidth > 700) ? '30px':'20px');
+
   const arrayOfSquares = useMemo(
     () => {
       console.log('counting');
@@ -131,35 +134,43 @@ export const GameBoard = ({
         gridGap: '0',
         gridTemplateColumns: `repeat(${
           currentGameMode ? presets[currentGameMode].field : 5
-        }, 30px)`,
+        }, ${squareSize})`,
       }}
       className="game-board"
     >
-      {arrayOfSquares.map(
-        (sqare, index) => (
-          // eslint-disable-next-line max-len
-          // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-          <div
-            key={sqare}
-            className={
-              classNames(
-                'game-board__square',
-                {
-                  'active-random': index === activeRandomSquare,
-                  'user-won-square': userWonIndexes.includes(index),
-                  'user-lost-square': userLostIndexes.includes(index),
-                },
+      {
+        arrayOfSquares.map(
+          (square, index) => {
+            return (
+              // eslint-disable-next-line max-len
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
+              <div
+                style={{
+                  width: `${squareSize}`,
+                  height: `${squareSize}`,
+                }}
+                key={square}
+                className={
+                  classNames(
+                    'game-board__square',
+                    {
+                      'active-random': index === activeRandomSquare,
+                      'user-won-square': userWonIndexes.includes(index),
+                      'user-lost-square': userLostIndexes.includes(index),
+                    },
 
-              )
-            }
-            onMouseDown={() => {
-              if (index === activeRandomSquare) {
-                updateUserWonIndexes(index);
-              }
-            }}
-          />
+                  )
+                }
+                onMouseDown={() => {
+                  if (index === activeRandomSquare) {
+                    updateUserWonIndexes(index);
+                  }
+                }}
+              />
+            )
+          }
         )
-      )}
+      }
     </section>
   );
 };

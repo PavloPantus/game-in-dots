@@ -6,20 +6,24 @@
 .App{
   display: flex;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .game-section{
   border: 1px solid black;
-  position: relative;
+  min-width: fit-content;
   width: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 5px;
 
   &__select-game-parameters{
     margin-top: 50px;
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
   }
 
   &__input-player-name {
@@ -56,6 +60,33 @@
     background-color: wheat;
     position: absolute;
     left: calc(50% - 150px / 2);
-    top: 110px;
+    bottom: -40px;
+  }
+}
+
+@media screen and (max-width: 615px) {
+  .App{
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .game-section{
+    flex-direction: column;
+    align-items: center;
+
+    &__select-game-parameters{
+      flex-direction: column;
+      align-items: center;
+    }
+
+    &__input-player-name {
+      margin-left: 0px;
+      margin-top: 10px;
+    }
+
+    &__play-button{
+      margin-left: 0px;
+      margin-top: 10px;
+    }
   }
 }
